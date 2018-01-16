@@ -21,7 +21,6 @@ This article is composed of the following sections:
 * Introduction to Python and Django
 * Introduction to Vue.js and Vue.js features
 * Bootstrapping the back-end project
-* Installing the Vue.js CLI
 * Bootstrapping the front-end project
 * Introduction to JSON Web Tokens
 * Integrating Django with Auth0
@@ -63,8 +62,9 @@ Vue.js has many features such as:
 
 ## Bootstrapping the Back-end Project
 
-Before you can create the front-end and the back-end applications you need to install some requirements in your development machine. For Django you need to have Python 3 (the latest version of Django requires Python 3), PIP and venv installed. For Vue.js you need to have Node.js, NPM and the Vue CLI installed   
-Also make sure to install whatever database management system (DBMS) you want to use with Django. If you are not interested by using a full-fledged database management system, at this point, you can still work with Django using a SQLite database which allows you to have a file-based database that doesn't require any special installation.
+Before you can create the back-end project you need to install some requirements in your development machine. For Django you need to have Python 3 (the latest version of Django requires Python 3), PIP and `venv` installed.
+
+Please note that you don't need to install a full fledged database management system to develop with Django. You can use a SQLite database which allows you to have a file-based database that doesn't require any special installation.
 
 ### Installing the Requirements
 
@@ -152,7 +152,9 @@ You should see the following home page
 
 ![django start page](https://screenshotscdn.firefoxusercontent.com/images/622ea6ae-dee4-47ef-895a-e2b9307e7c68.png)
 
-## Installing the Vue CLI
+
+
+## Bootstrapping the Front-end Project
 
 Vue.js has a [CLI utility](https://github.com/vuejs/vue-cli) that allows Vue developers to quickly generate single page applications. The CLI offers pre-configured build setups for a modern frontend workflow and takes only some minutes to scaffold a basic project boilerplate with features such as hot-reloading, lint-on-save, and production-ready builds.
 
@@ -168,7 +170,6 @@ npm install -g vue-cli
 
 You may need to add `sudo` to the npm command for installing commands globally, depending on your [npm configuration](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
-### Bootstrapping the Front-end Project
 
 After installing the Vue CLI, let's use it to generate a new Vue application based on the [webpack template](https://github.com/vuejs-templates/webpack).
 
