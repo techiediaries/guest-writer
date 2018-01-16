@@ -200,6 +200,26 @@ signed or integrity protected with a Message Authentication Code
 
 A JWT has three parts:  a header, a payload, and a signature. The header contains informations such as the algorithm to be used for signing the payload and the header (e.g HS256) and the payload holds the claims to make.
 
+## Creating an Auth0 Resource/API
+
+Before you can use Auth0 authentication with your application you first need to create an Auth0 account then head over to the [dashboard](https://manage.auth0.com/) 
+
+![Auth0 Dashboard](https://screenshotscdn.firefoxusercontent.com/images/fce95f70-646d-4994-8428-9f719982cb32.png)
+
+Next head to the [API section](https://manage.auth0.com/#/apis) and click on the *CREATE API* button. 
+
+![Auth0 API Section](https://screenshotscdn.firefoxusercontent.com/images/61224ef4-dab5-47bb-b0fd-bc18c3c65590.png)
+
+You'll be presented with a form to fill in your API details: the name, the identifier and the signing algorithm   
+
+![Auth0 CREATE API Form](https://screenshotscdn.firefoxusercontent.com/images/4f6d02f4-ba10-4657-b5c1-39d7bf0ad170.png)
+
+Enter the details and click on the *CREATE* button. You'll be taken to a page where you can further customize your API settings and create test clients etc.
+
+![Auth0 API Settings](https://screenshotscdn.firefoxusercontent.com/images/4f5f0184-5df3-472a-a0b5-a52d5172fac1.png)
+
+That's it! You are now ready to integrate your Django application with Auth0
+
 ## Integrating Django with Auth0
 
 In this section we'll see how to secure the Django REST API with Auth0.
@@ -288,26 +308,7 @@ The `JWT_AUTH_HEADER_PREFIX` is set to **Bearer** the default prefix used by Aut
 
 We have also set `JWT_PAYLOAD_GET_USERNAME_HANDLER` to a custom method. This tells `djangorestframework-jwt` to use our custom method in order to map the username from the **access_token** payload to the Django user.
 
-There are two approaches for handling the mapping between users in Django and the JWT tokens:
-
-### First Approach: Storing Users in Your Database
-
-If you need to store information about users in your database then you can use the following method:
-
-```python
-def jwt_get_username_from_payload_handler(payload):
-    return payload.get('sub').replace('|', '.')
-```
-
-This function gets the *sub* property of the JWT payload and replace `|` with `.`. But of course for the authentication to be successful you need to create a corresponding user in your application database when the user successfully signs up using Auth0. To accomplish this you can make use of Auth0 Rules.
-
->Rules are functions written in JavaScript that are executed in Auth0 as part of the transaction every time a user authenticates to your application. They are executed after the authentication and before the authorization. [Auth0 docs](https://auth0.com/docs/rules/current)
-
-You can see [this link for a simple signup rule](https://github.com/auth0/rules/blob/master/rules/signup.md) that augments the user's profile with signup metadata (see this [StackOverflow answer](https://stackoverflow.com/questions/40250292/user-signup-event-in-auth0-lock)).
-
-### Second Approach
-
-For most cases, you don't need to store users in your database since Auth0 handles all of that for you including advanced features such as profiles. So we can use a custom function that checks if a general user, that we create once, exists and map it to all Auth0 users.  
+For most cases, you don't need to store users in your database since Auth0 handles all of that for you including advanced features such as profiles. So we can use a custom function that checks if a general (can be fake) user that we create exists and map it to all Auth0 users.  
 
 So head over to your application and create a user with any valid username such as *auth0user*, you can do that through Django admin interface or in a migration by adding the following code.
 
@@ -345,16 +346,14 @@ Next just run migrate to create your initial data:
 python manage.py migrate
 ```
 
-Now you need to use this custom method in `settings.py`:
+This is the custom method that maps the JWT payload with the *auth0user* user:
 
 ```python
 def jwt_get_username_from_payload_handler(payload):
     return 'auth0user'
 ```
 
-This maps Auth0 users with the user with *auth0user* username.
-
-Please note that you can return the username of any existing user in the database because we are not going to use this for anything besides the sole purpose of letting `djangorestframework-jwt` to successfully authenticating once the JWT token is found valid.
+Please note that you can return the username of any existing user in the database because we are not going to use this for anything besides the sole purpose of letting `djangorestframework-jwt` successfully authenticate the user once the JWT token is found valid.
 
 ### Testing JWT Authentication
 
@@ -370,7 +369,7 @@ def private(request):
     return HttpResponse("You should not see this message if not authenticated!");
 ```
 
-Make sure also to create corresponding URLs in `urls.py`:
+Make sure also to create the corresponding URLs in `urls.py`:
 
 ```python
 from django.conf.urls import url
@@ -385,7 +384,7 @@ In the next part we will create the actual API endpoints.
 
 ## Conclusion and Next Steps
 
-In this article we have bootstrapped both the back-end project with Django and the front-end application using the Vue CLI. We have also added JWT authentication to our back-end using Auth0. In the next part we will see how the REST API using Django REST framework and then how to consume it from the Vue.js front-end using Axios. We'll also see how to create our project front-end views so stay tuned!
+In this article we have bootstrapped both the back-end project with Django and the front-end application using the Vue CLI. We have also added JWT authentication to our back-end using Auth0. In the next part we will see how to create the REST API using Django REST framework and then how to consume it from the Vue.js front-end using Axios. We'll also see how to create our project front-end views so stay tuned!
 
 These are some screenshots from the demo project we are going to continue building in the next parts:
 
