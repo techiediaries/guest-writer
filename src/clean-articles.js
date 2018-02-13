@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // regex to recognize regular blocks of code (i.e. starting and ending with ```)
-const regex = /```\w{1,5}[\n.+]([^`]((\\*|.+)\s+))*```/g
+const regex = /```\w*[\n.+]([^`]((\\*|.+)\s+))*```/g
 
 // regex to recognize html blocks
 const regex2 = /{% highlight html %}[\n\D\d]+?{% endhighlight %}/g

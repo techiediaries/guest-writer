@@ -17,7 +17,7 @@ Before executing the commands shown below, please, be sure that [Docker](https:/
 1. Check that Docker is available: `docker --version`;
 2. Check that Node.js is available: `node --version`;
 3. To create a new article, issue the following command: `node src`;
-4. To see how your article will look in our blog, issue the following command: `node docker`;
+4. To see how your article will look in our blog, issue the following command: `node src/docker`;
 
 The blog engine might take a few seconds to start and generate the articles (usually less than 10 seconds). After started, we can check the blog at [`http://localhost:4000/blog/`](http://localhost:4000/blog/) (note that the trailing slash is mandatory).
 
