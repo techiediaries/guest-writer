@@ -232,7 +232,7 @@ This tells `webpack-bundle-tracker` to generate the stats file in the root folde
 
 If you re-run you Webpack dev server, you'll have the `webpack-stats.json` file generated in root of your project   
 
-![webpack-stats.json](https://screenshotscdn.firefoxusercontent.com/images/6fa858c4-f7b2-452f-bfbb-85e259c1565a.png)
+![webpack-stats.json](https://screenshotscdn.firefoxusercontent.com/images/89eab56a-d9d4-4952-bee9-4bc435036e09.png)
 
 If you visit you Django app now you'll get this error in the console
 
