@@ -66,7 +66,7 @@ The Webpack boilerplate (that you have used to scaffold the Vue project using th
 
 This is the structure of your Vue application based on Webpack 
 
-![](https://screenshotscdn.firefoxusercontent.com/images/25b68082-de0c-450f-bb2b-5d392d948f7c.png)
+![Vue application](https://screenshotscdn.firefoxusercontent.com/images/25b68082-de0c-450f-bb2b-5d392d948f7c.png)
 
 
 There are many folders and files in the project such as:
@@ -96,7 +96,7 @@ In this section I'll show you step by step how to integrate Vue and Django
 First  head over to your terminal or command prompt then you'll need to clone the project we have previously built 
 
 ```bash
-git clone https://github.com/techiediaries/django-auth0-vue-part-1.git django-auth0-vue-part-2
+git clone https://github.com/techiediaries/djangovue 
 ```
 
 You can also skip this step and just continue with the project you have built yourself in the previous part.
@@ -106,29 +106,27 @@ Please note that you need to have your previously created virtual environment ac
 You can activate a virtual environment by issuing the following command
 
 ```bash
-source myenv/bin/activate
+source env/bin/activate
 ```
 
-Where *myenv* is the name of the virtual environment. 
+Where *env* is the name of the virtual environment. 
 
 I assume that you have previously followed the steps in the part 1 to install the Django packages. if this is not the case use `requirements.txt` to install the requirements
 
 ```bash
-cd django-auth0-vue-part-2
+cd djangovue
 pip install -r requirements.txt
 ``` 
 
-You also need to install the Vue app dependencies, navigate inside the `vueapp` folder:
+You also need to install the Vue app dependencies, navigate inside the `frontend` folder and execute:
 
 ```bash
-cd vueapp
 npm install
 ``` 
 
-Next navigate back to the root folder of your Django project then run the following command to install the Webpack loader package for integrating Webpack with Django
+Next run the following command to install the Webpack loader package for integrating Webpack with Django
 
 ```bash
-cd ..
 pip install django-webpack-loader
 ``` 
 
@@ -181,7 +179,7 @@ First create the `index.html` template in `catalog/templates/index.html` then ad
 
 The page contains a `<div>` with the id *app* where you can mount the Vue application.
 
-The `render_bundle` tag (with *app* as an argument) is used to render a `<script>` tag to include the *app* bundle.
+The `render_bundle` tag (with *app* as an argument) is used to include the *app* bundle files.
 
 After creating the template, you can next use *TemplateView*  to serve it. Go to your project `urls.py`` file then add the following:
 
@@ -214,11 +212,11 @@ This is a screen shot of the error that you will get
 To get rid of this error you need to generate the `webpack-stats.json` file using  the Webpack plugin `webpack-bundle-tracker` so first install it from npm using (make sure you are inside the Vue application):
 
 ```bash
-cd vueapp 
+cd frontend 
 npm install webpack-bundle-tracker --save
 ``` 
 
-In `vueapp/build/webpack.dev.conf.js`  import `webpack-bundle-tracker` and include *BundleTracker* in Webpack plugins
+In `frontend/build/webpack.dev.conf.js`  import `webpack-bundle-tracker` and include *BundleTracker* in Webpack plugins
 
 ```
 const BundleTracker = require('webpack-bundle-tracker')
@@ -236,9 +234,33 @@ If you re-run you Webpack dev server, you'll have the `webpack-stats.json` file 
 
 ![webpack-stats.json](https://screenshotscdn.firefoxusercontent.com/images/6fa858c4-f7b2-452f-bfbb-85e259c1565a.png)
 
+If you visit you Django app now you'll get this error in the console
+
+>Loading failed for the <script> with source “http://127.0.0.1:8000/app.js”.
+	
+You can fix this error by going to `frontend/config/index.js` next locate the `assetsPublicPath` setting and change its value from `/` to `http://localhost:8080/`
+
+```js
+/*...*/
+module.exports = {
+  dev: {
+
+    // Paths
+    assetsSubDirectory: 'static',
+    assetsPublicPath: 'http://localhost:8080/',
+    proxyTable: {},
+    /*...*/
+```
+
+Next rerun your frontend app using
+
+```bash
+npm run dev
+```
+
 You should now be able to see your main Vue page by navigating with your browser to http://localhost:8000
 
-![main Vue page](https://screenshotscdn.firefoxusercontent.com/images/2c69b3c8-7f23-4084-8819-ece55a517a12.png)
+![main Vue page](https://screenshotscdn.firefoxusercontent.com/images/5f1ade34-ccd1-40ba-8d2b-c4cd47a0c7ab.png)
 
 ### Fixing Hot Code Reloading 
 
@@ -248,7 +270,7 @@ This is what the [docs](https://vue-loader.vuejs.org/en/features/hot-reload.html
 
 ![Hot Code Reload](http://blog.evanyou.me/images/vue-hot.gif)
 
-Now in `vueapp/build/webpack.dev.conf.js` you need to configure the Webpack Dev server to accept requests from other origins such as `http://localhost:8000` since the Django server will send XHR requests to `http://localhost:8080` for getting the source file changes.
+Now in `frontend/build/webpack.dev.conf.js` you need to configure the Webpack Dev server to accept requests from other origins such as `http://localhost:8000` since the Django server will send XHR requests to `http://localhost:8080` for getting the source file changes.
 
 Add a *headers* object in *devServer*. 
 ```javascript
@@ -273,20 +295,22 @@ Because now you are using the Django server to serve that page so you'll need to
 
 ![Auth0 callback URL](https://screenshotscdn.firefoxusercontent.com/images/77f72018-2cc5-4649-891b-ebf7499153ff.png)
 
-You also need to set this address in your `vueapp/src/auth/auth0-variables.js` file as `callbackUrl`
+You also need to set this address in your `frontend/src/auth/AuthService.js` file as `redirectUri`
 
 ```js
-export const AUTH_CONFIG = {
-  clientId: 'TcHzYEyEzpJ0gYtYVyavXXjidRjQ7Yqw',
-  domain: 'techiediaries.auth0.com',
-  callbackUrl: 'http://localhost:8000/',
-  apiUrl: 'https://djangovuedemo.techiediaries.com'
-}
+  auth0 = new auth0.WebAuth({
+    domain: '<YOUR_DOMAIN>',
+    clientID: '<YOUR_CLIENT_ID>',
+    redirectUri: 'http://localhost:8000/',
+    audience: '<YOUR_AUDIENCE>,
+    responseType: 'token id_token',
+    scope: 'openid profile'
+  });
 ```
 
 Now you'll be able to authenticate using Auth0 to see this page and make a private API call
 
-![make private API call](https://screenshotscdn.firefoxusercontent.com/images/2f144f47-9b89-4c75-8f9a-5bfdc0aaf71d.png)
+![make private API call](https://screenshotscdn.firefoxusercontent.com/images/6112ae65-db0b-49d0-99b9-1400aa444fb7.png)
 
 
 ## Conclusion
